@@ -194,7 +194,7 @@
 		reg = <0x68>;
 	};
 
-	silabs: silabs@54 {
+	supervisor: supervisor@54 {
 		compatible = "technologic,ts7100-wdt";
 		/* 5min timeout default, in case of slow userspace.
 		 * Set to 0 to disable WDT at startup. Userspace procs
@@ -203,7 +203,6 @@
 		 */
 		timeout-sec = <300>;
 		reg = <0x54>;
-		status = "okay";
 	};
 };
 
