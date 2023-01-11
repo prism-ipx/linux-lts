@@ -94,11 +94,6 @@
 		status = "disabled";
 	};
 
-	regulators {
-		compatible = "simple-bus";
-		#address-cells = <1>;
-		#size-cells = <0>;
-
 		reg_gpio_dvfs: regulator-gpio {
 			compatible = "regulator-gpio";
 			pinctrl-names = "default";
@@ -132,7 +127,6 @@
 			compatible = "regulator-dummy";
 			regulator-name = "eth_phy_dummy";
 		};
-	};
 
         i2c_gpio@0 {
 	        compatible = "i2c-gpio";
