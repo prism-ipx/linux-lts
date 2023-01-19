@@ -16,6 +16,11 @@
 	model = "embeddedTS i.MX6ul TS-7180 (B)";
 	compatible = "technologic,ts7180", "fsl,imx6ul";
 
+	aliases {
+		ethernet0 = &fec2;
+		ethernet1 = &fec1;
+	};
+
 	chosen {
 		stdout-path = &uart1;
 	};
@@ -87,11 +92,6 @@
 			size = <0x14000000>;
 			linux,cma-default;
 		};
-	};
-
-	aliases {
-		ethernet0 = &fec2;
-		ethernet1 = &fec1;
 	};
 
 	pxp_v4l2 {
