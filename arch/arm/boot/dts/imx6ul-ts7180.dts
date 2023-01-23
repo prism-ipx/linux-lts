@@ -154,21 +154,22 @@
 	sda-gpios = <&gpio1 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 	status = "okay";
 
-        /*
-         *      // MAG_N_IRQ into NAND_ALE/SD2_RST#/PWM3 pin B4
-         *	// as well as the FPGA
-         *
-         * The lis2mdl_magn is now handled by the st_magn driver
-         */
-	magnet: magnetometer@1e {
+	/*
+	 * lis2mdl_magn (now lis2mdl) is handled by the st_magn driver
+	 *
+	 *	- MAG_N_IRQ into NAND_ALE/SD2_RST#/PWM3 pin B4
+	 *	- as well as the FPGA
+	 *
+	 * drdy-int-pin is mandatory, not optional, when using interrupts.
+	 */
+	magn: magnetometer@1e {
 		compatible = "st,lis2mdl";
 		reg = <0x1e>;
-                // See MX6UL_PAD_NAND_ALE__GPIO4_IO10 for pinmux
-                /* drdy-int-pin = ?; */
+		st,drdy-int-pin = <1>;
 		interrupt-parent = <&gpio4>;
-		interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
-	        /* magnet-supply = <&reg_3v3>; */
-	        vddio-supply = <&reg_3v3>;
+		interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;    /* See MX6UL_PAD_NAND_ALE__GPIO4_IO10 */
+		vdd-supply = <&reg_3v3>;
+		vddio-supply = <&reg_3v3>;
 		status = "okay";
 	};
 
