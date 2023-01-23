@@ -154,25 +154,34 @@
 	sda-gpios = <&gpio1 3 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 	status = "okay";
 
-        // MAG_N_IRQ into NAND_ALE/SD2_RST#/PWM3 pin B4
-        // as well as the FPGA
+        /*
+         *      // MAG_N_IRQ into NAND_ALE/SD2_RST#/PWM3 pin B4
+         *	// as well as the FPGA
+         *
+         * The lis2mdl_magn is now handled by the st_magn driver
+         */
 	magnet: magnetometer@1e {
 		compatible = "st,lis2mdl";
 		reg = <0x1e>;
                 // See MX6UL_PAD_NAND_ALE__GPIO4_IO10 for pinmux
+                /* drdy-int-pin = ?; */
 		interrupt-parent = <&gpio4>;
 		interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
-	        vdd-supply = <&reg_3v3>;
+	        /* magnet-supply = <&reg_3v3>; */
+	        vddio-supply = <&reg_3v3>;
 		status = "okay";
 	};
 
-        // GYRO_INT into CSI_HSYNC pin F3
+        /*
+         * ism330dlc is (now) handled by the lsm6dsx gyro/accel driver
+         *
+	 *	- GYRO_INT into CSI_HSYNC pin F3
+         */
 	gyro: ism330@6a {
 		compatible = "st,ism330dlc";
 		reg = <0x6a>;
-                // See MX6UL_PAD_CSI_HSYNC__GPIO4_IO20 for pinmux
 		interrupt-parent = <&gpio4>;
-		interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
+		interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;    /* See MX6UL_PAD_CSI_HSYNC__GPIO4_IO20 */
 	        vdd-supply = <&reg_3v3>;
 		status = "okay";
 	};
