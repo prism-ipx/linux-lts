@@ -162,6 +162,7 @@
                 // See MX6UL_PAD_NAND_ALE__GPIO4_IO10 for pinmux
 		interrupt-parent = <&gpio4>;
 		interrupts = <10 IRQ_TYPE_LEVEL_HIGH>;
+	        vdd-supply = <&reg_3v3>;
 		status = "okay";
 	};
 
@@ -172,6 +173,7 @@
                 // See MX6UL_PAD_CSI_HSYNC__GPIO4_IO20 for pinmux
 		interrupt-parent = <&gpio4>;
 		interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
+	        vdd-supply = <&reg_3v3>;
 		status = "okay";
 	};
 
