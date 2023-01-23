@@ -157,7 +157,7 @@
         // MAG_N_IRQ into NAND_ALE/SD2_RST#/PWM3 pin B4
         // as well as the FPGA
 	magnet: magnetometer@1e {
-		compatible = "st,lis2mdl_magn";
+		compatible = "st,lis2mdl";
 		reg = <0x1e>;
                 // See MX6UL_PAD_NAND_ALE__GPIO4_IO10 for pinmux
 		interrupt-parent = <&gpio4>;
