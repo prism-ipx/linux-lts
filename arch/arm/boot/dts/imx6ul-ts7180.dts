@@ -111,10 +111,14 @@
 			gpio = <&gpio6 20 GPIO_ACTIVE_HIGH>;
 		};
 
-		reg_eth_phy: eth_phy {
-			compatible = "regulator-dummy";
-			regulator-name = "eth_phy_dummy";
-		};
+	reg_3v3: regulator-3v3 {
+		compatible = "regulator-fixed";
+		regulator-name = "3V3";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+		pinctrl-0 = <>; /* still needed if always-on? */
+	};
 
         i2c_gpio@0 {
 	        compatible = "i2c-gpio";
@@ -272,7 +276,7 @@
 	pinctrl-0 = <&pinctrl_enet1>;
 	phy-mode = "rmii";
 	phy-handle = <&ethphy0>;
-	phy-supply = <&reg_eth_phy>;
+	phy-supply = <&reg_3v3>;
 	status = "okay";
 };
 
@@ -281,7 +285,7 @@
 	pinctrl-0 = <&pinctrl_enet2>;
 	phy-mode = "rmii";
 	phy-handle = <&ethphy1>;
-	phy-supply = <&reg_eth_phy>;
+	phy-supply = <&reg_3v3>;
 	status = "okay";
 
 	mdio {
