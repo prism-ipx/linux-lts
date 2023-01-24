@@ -173,17 +173,17 @@
 		status = "okay";
 	};
 
-        /*
-         * ism330dlc is (now) handled by the lsm6dsx gyro/accel driver
-         *
+	/*
+	 * ism330dlc is (now) handled by the lsm6dsx gyro/accel driver
+	 *
 	 *	- GYRO_INT into CSI_HSYNC pin F3
-         */
+	 */
 	gyro: ism330@6a {
 		compatible = "st,ism330dlc";
 		reg = <0x6a>;
 		interrupt-parent = <&gpio4>;
 		interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;    /* See MX6UL_PAD_CSI_HSYNC__GPIO4_IO20 */
-	        vdd-supply = <&reg_3v3>;
+		vdd-supply = <&reg_3v3>;
 		status = "okay";
 	};
 
