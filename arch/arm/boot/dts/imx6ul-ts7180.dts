@@ -200,6 +200,7 @@
                  * watchdog(8) defaults to 60 seconds.
 		 */
 		timeout-sec = <300>;
+                enable-early;
 		reg = <0x54>;
 	};
 };
