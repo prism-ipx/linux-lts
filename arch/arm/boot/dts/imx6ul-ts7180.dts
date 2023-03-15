@@ -193,14 +193,13 @@
 	};
 
 	supervisor: supervisor@54 {
-		compatible = "technologic,ts-wdt";
+		compatible = "technologic,ts7100-wdt";
 		/* 5min timeout default, in case of slow userspace.
 		 * Set to 0 to disable WDT at startup. Userspace procs
 		 * can still start feeding with different values later -
                  * watchdog(8) defaults to 60 seconds.
 		 */
 		timeout-sec = <300>;
-                enable-early;
 		reg = <0x54>;
 	};
 };
