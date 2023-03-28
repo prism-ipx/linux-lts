@@ -477,8 +477,8 @@ CONFIG_PROVE_LOCKING=y
 #
 # TS-7180 requires CONFIG_GPIO_TS4900 to boot, because the FPGA controls access to SD power
 CONFIG_GPIO_TS4900=y
-# TS-7180 requires CONFIG_TS7100_WATCHDOG or else it will reset
-CONFIG_TS_WDT_MICRO=y
+# TS-7180 requires CONFIG_TS7100_WATCHDOG ?
+CONFIG_TS7100_WATCHDOG=y
 # Probably not this one:
 CONFIG_TS_WDT_MICRO=n
 #
