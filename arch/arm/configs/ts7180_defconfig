@@ -485,6 +485,10 @@ CONFIG_TS_WDT_MICRO=n
 CONFIG_EXTRA_FIRMWARE="imx/sdma/sdma-imx6q.bin"
 CONFIG_EXTRA_FIRMWARE_DIR="firmware"
 #
+# This and tsimx6ul_defconfig have CONFIG_THERMAL, where common-config has CONFIG_THERMAL_STATISTICS=y and CONFIG_THERMAL_WRITABLE_TRIPS=y
+#
+
+#
 # IIO
 #
 CONFIG_IIO_BUFFER_CB=y
