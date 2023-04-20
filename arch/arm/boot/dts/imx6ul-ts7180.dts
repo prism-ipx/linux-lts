@@ -201,6 +201,7 @@
 		 */
 		timeout-sec = <300>;
 		reg = <0x54>;
+                status = "okay";
 	};
 };
 
