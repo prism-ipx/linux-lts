@@ -97,13 +97,6 @@
 			regulator-max-microvolt = <3300000>;
 			gpio = <&gpio8 1 GPIO_ACTIVE_HIGH>;
 			enable-active-high;
-			/* The mxsfb driver doesn't properly handle an
-			 * EPROBE_DEFER from trying to get the gpio for power
-			 * control. Because of this, just force the regulator
-			 * on from the kernel as soon as it can be turned on.
-			 */
-			regulator-boot-on;
-			regulator-always-on;
 		};
 
 		dummy_3v3: rev_3v3@0 {
