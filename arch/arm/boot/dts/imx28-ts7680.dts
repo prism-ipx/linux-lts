@@ -95,13 +95,17 @@
 		regulator-max-microvolt = <1800000>;
 		gpio = <&gpio8 44 GPIO_ACTIVE_HIGH>;
 		startup-delay-us = <70000>;
+		//regulator-always-on;
+		//regulator-boot-on;
 		enable-active-high;
 	};
 
 	reg_enet_3v3: regulator-enet-3v3 {
-		compatible = "regulator-dummy";
+		compatible = "regulator-fixed";
 		regulator-name = "ENET_3V3";
-		enable-active-high;
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
 		regulator-boot-on;
 	};
 
@@ -415,7 +419,6 @@
 	};
 };
 
-/* XXX: UHS 1.8v should be able to be supported by pinctrl */
 &ssp0 {
 	compatible = "fsl,imx28-mmc";
 	pinctrl-names = "default";
@@ -453,12 +456,12 @@
 	broken-cd;
 	//disable-wp;
 	//cap-sdio-irq;
-	//non-removable;
+	non-removable;
 	status = "okay";
 
-	wlcore: wlcore@1 {
+	wlcore: wlcore@2 {
 		compatible = "ti,wl1271";
-		reg = <1>;
+		reg = <2>;
 		interrupt-parent = <&gpio1>;
 		/* NOTE: This is inverted from the 
 		 * TiWi-BLE manual. The driver changes
