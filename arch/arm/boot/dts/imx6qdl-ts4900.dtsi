@@ -96,7 +96,7 @@
 
 &ecspi2 {
 	num-cs = <1>;
-	cs-gpios = <&gpio6 2 GPIO_ACTIVE_LOW>;
+	cs-gpios = <&gpio6 2 0>, <&gpio5 29 0>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_ecspi2>;
 	status = "okay";
@@ -111,6 +111,12 @@
 		crystal = <1>;
 		poll-time = <100>;
 	};
+
+        spidev: spi@1 {
+                compatible = "spidev";
+                reg = <1>;
+                spi-max-frequency = <25000000>;
+        };
 };
 
 &fec {

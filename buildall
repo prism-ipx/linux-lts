@@ -1,48 +1,120 @@
 #!/bin/bash -e
 
+# Defaults
+clean=
+buildkernel=0
+leavetmp=0
+newconfig=0
+cleanit=''
+newfilename="config_backup.$(date +"%Y%m%d_%H%M%S")"
+usage()
+{
+  echo
+  echo "Usage: $0 [--kernel] [--newconfig]"
+  echo "       [-k --kernel] Compile the kernel"
+  echo "       [-n --newconfig]   create a fresh - .config file"
+  echo
+  exit 2
+}
+
+parsed_args=$(getopt -a -n $0 -o "clpnh" -l "clean,leavetmp,packageonly,newconfig,help" -- "$@")
+
+# set --:
+# If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters
+# are set to the arguments, even if some of them begin with a ‘-’.
+eval set -- "$parsed_args"
+
+while :
+do
+  case "$1" in
+    -k|--kernel) buildkernel=1; shift;;
+    -n|--newconfig) newconfig=1; shift;;
+    -h|--help) usage; exit;;
+    --) shift; break;;
+  esac
+done
+
+echo "Don't forget the following if starting from a fresh config"
+
+  echo "Alter SPI controllers in /arch/arm/boot/dts/imx6qdl-ts04900.dtsi"
+  echo "'make menuconfig'"
+  echo "Prompt: SMSC LAN95XX based USB 2.0 10/100 ethernet devices
+   Location:
+     -> Device Drivers
+       -> Network device support (NETDEVICES [=y])
+         -> USB Network Adapters (USB_NET_DRIVERS [=y])"
 source ../env.sh
 
-# Always build zImage, most common. If LOADADDR is set, then uImage is also built
-TARGETS="zImage"
-if [ -n "${LOADADDR}" ]; then TARGETS+=" uImage"; fi
 
-# Build the actual kernel, binary files, and loadable modules.
-# Use as many CPUs to do this as possible.
-make -j"$(nproc)" && make ${TARGETS} && make modules
-
-# Create a temporary directory to install the kernel to in order to use that as a base directory for a tarball.
-# Also creates a temporary file that is used as the tarball name.
-TEMPDIR=$(mktemp -d)
-TEMPFILE=$(mktemp)
-mkdir "${TEMPDIR}/boot/"
-
-# Adds "arch/arm/boot/" path prefix to each TARGET
-cp $(for i in ${TARGETS}; do echo arch/arm/boot/$i; done) "${TEMPDIR}"/boot/
-
-# Copy the full .config file to the target, this is optional and can be removed
-cp .config "${TEMPDIR}"/boot/config
-
-# Copy all of the generated FDT binary files to the target
-cp arch/arm/boot/dts/*ts*.dtb  "${TEMPDIR}"/boot/
-
-# Install kernel modules to the target
-INSTALL_MOD_PATH="${TEMPDIR}" make modules_install
-
-# Install kernel headers to the target, this is optional in most cases and can be removed to save space on the target
-make headers_install INSTALL_HDR_PATH="${TEMPDIR}"
-
-# If WILC is set to "y", then build the external module for the WILC300 Wi-Fi/BLE device.
-# Note that this expects the source to be available as a subfolder in the kernel. See the above sections 
-# for details on getting the driver source if it is used on this specific platform.
-if [ "${WILC}" == "y" ]; then
-    CONFIG_WILC_SPI=m INSTALL_MOD_PATH="${TEMPDIR}" make M=./wilc3000-external-module modules modules_install
+if [[ "$newconfig" -eq 1 ]]; then
+  if [ -f ".config" ]; then
+    read -p "This is replace the existing .config file your current kerenl settings WILL be lost. Do you wish to continue (y/N) [N]: " -n 1 answer
+    answer=${answer:-N}
+    echo '' # this places a carriage return, so the next echo isn't appended to the prompt
+    if [[ ! $answer =~ ^[Yy]$ ]]; then
+      echo "script aborted"
+      exit 2
+    fi
+    mv ".config" "$newfilename"
+    echo "Current config back up as $newfilename"
+  fi
+  #this may be done if we need to get back to defaults
+  make ts4900_defconfig
+  echo "Alter SPI controllers in /arch/arm/boot/dts/imx6qdl-ts04900.dtsi"
+  echo "'make menuconfig' and changed the Network support -> SMSC LAN95xxx from 'M' to '*' may need to update parent to me Y '*'"
+  echo "Prompt: SMSC LAN95XX based USB 2.0 10/100 ethernet devices
+   Location:
+     -> Device Drivers
+       -> Network device support (NETDEVICES [=y])
+         -> USB Network Adapters (USB_NET_DRIVERS [=y])
+          -> Multi-purpose USB Networking Framework (USB_USBNET [=m]) "
+  exit 1
 fi
 
-# Use fakeroot to properly set permissions on the target folder as well as create a tarball from this.
-fakeroot sh -c "chmod 755 ${TEMPDIR};
+if [[ "$buildkernel" -eq 1 ]]; then
+  # Always build zImage, most common. If LOADADDR is set, then uImage is also built
+  TARGETS="zImage"
+  if [ -n "${LOADADDR}" ]; then TARGETS+=" uImage"; fi
+
+  # Build the actual kernel, binary files, and loadable modules.
+  # Use as many CPUs to do this as possible.
+  make -j"$(nproc)" && make ${TARGETS} CONFIG_DEBUG_SECTION_MISMATCH=y && make modules
+
+  # Create a temporary directory to install the kernel to in order to use that as a base directory for a tarball.
+  # Also creates a temporary file that is used as the tarball name.
+  TEMPDIR=$(mktemp -d)
+  TEMPFILE=$(mktemp)
+  mkdir "${TEMPDIR}/boot/"
+
+  # Adds "arch/arm/boot/" path prefix to each TARGET
+  cp $(for i in ${TARGETS}; do echo arch/arm/boot/$i; done) "${TEMPDIR}"/boot/
+
+  # Copy the full .config file to the target, this is optional and can be removed
+  cp .config "${TEMPDIR}"/boot/config
+
+  # Copy all of the generated FDT binary files to the target
+  cp arch/arm/boot/dts/*ts*.dtb  "${TEMPDIR}"/boot/
+
+  # Install kernel modules to the target
+  INSTALL_MOD_PATH="${TEMPDIR}" make modules_install
+
+  # Install kernel headers to the target, this is optional in most cases and can be removed to save space on the target
+  make headers_install INSTALL_HDR_PATH="${TEMPDIR}"
+
+  # If WILC is set to "y", then build the external module for the WILC300 Wi-Fi/BLE device.
+  # Note that this expects the source to be available as a subfolder in the kernel. See the above sections 
+  # for details on getting the driver source if it is used on this specific platform.
+  if [ "${WILC}" == "y" ]; then
+    CONFIG_WILC_SPI=m INSTALL_MOD_PATH="${TEMPDIR}" make M=./wilc3000-external-module modules modules_install
+  fi
+
+  # Use fakeroot to properly set permissions on the target folder as well as create a tarball from this.
+  fakeroot sh -c "chmod 755 ${TEMPDIR};
         chown -R root:root ${TEMPDIR};
         tar czf ${TEMPFILE}.tar.gz -C ${TEMPDIR} .";
 
-# Create a final output tarball and cleanup all of the temporary files and folder.
-cp ${TEMPFILE}.tar.gz embeddedTS-linux-lts-"$(date +"%Y%m%d")"-"$(git describe --abbrev=8 --dirty --always)".tar.gz
-rm -rf "${TEMPDIR}" "${TEMPFILE}"
+  # Create a final output tarball and cleanup all of the temporary files and folder.
+  cp ${TEMPFILE}.tar.gz embeddedTS-linux-lts-"$(date +"%Y%m%d")"-"$(git describe --abbrev=8 --dirty --always)".tar.gz
+  rm -rf "${TEMPDIR}" "${TEMPFILE}"
+fi
+echo "Task complete"
