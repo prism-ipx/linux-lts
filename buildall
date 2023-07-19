@@ -47,8 +47,12 @@ echo "Don't forget the following if starting from a fresh config"
    Location:
      -> Device Drivers
        -> Network device support (NETDEVICES [=y])
-         -> USB Network Adapters (USB_NET_DRIVERS [=y])"
-source ../env.sh
+         -> USB Network Adapters (USB_NET_DRIVERS [=y])
+	 
+	 "
+
+# Place this line back in if the environment needs to be changed from the docker assigned defaults
+# source /tsimx6/env.sh
 
 
 if [[ "$newconfig" -eq 1 ]]; then
@@ -129,10 +133,13 @@ if [ "$buildkernel" -eq 1 ] || [ "$package" -eq 1 ]; then
         tar czf ${TEMPFILE}.tar.gz -C ${TEMPDIR} .";
   
   # Create a final output tarball and cleanup all of the temporary files and folder.
-  cp ${TEMPFILE}.tar.gz bscv3-linux-lts-kernel-"$(date +"%Y%m%d")"-"$(git describe --abbrev=8 --dirty --always)".tar.gz
+  # rm /tsimx6/operatingsystem/packages/bscv3-linux-lts-kernel-*.tar.gz # remove the existing file
+  cp ${TEMPFILE}.tar.gz /tsimx6/operatingsystem/packages/bscv3-linux-lts-kernel-"$(date +"%Y%m%d")"-"$(git describe --abbrev=8 --dirty --always)".tar.gz
 
   if [[ "$leavetmp" -ne 1 ]]; then
     rm -rf "${TEMPDIR}" "${TEMPFILE}"
+  else
+    echo "built files left in ${TEMPDIR}"
   fi
 
   echo "################################"
