@@ -194,6 +194,7 @@
 		btse-minutes = <1>;
 		vb75t = <2>; /* 2.25 V */
 		vb85t = <2>; /* 2.55 V */
+                status="disabled";
 	};
 
 	isl12022_sram: eeprom@57 {
