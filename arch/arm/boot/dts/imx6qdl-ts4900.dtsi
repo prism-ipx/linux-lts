@@ -112,11 +112,6 @@
 		poll-time = <100>;
 	};
 
-        spidev: spi@1 {
-                compatible = "spidev";
-                reg = <1>;
-                spi-max-frequency = <25000000>;
-        };
 };
 
 &fec {
@@ -205,26 +200,13 @@
 	pinctrl-names = "default", "gpio";
 	pinctrl-0 = <&pinctrl_i2c1>;
 	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-	scl-gpios = <&gpio3 21 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
-	sda-gpios = <&gpio3 28 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+	scl-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
+	sda-gpios = <&gpio3 28 GPIO_ACTIVE_HIGH>;
 	status = "okay";
 
 	isl12022: rtc@6f {
 		compatible = "isil,isl12022";
 		reg = <0x6f>;
-		btse-minutes = <1>;
-		vb75t = <2>; /* 2.25 V */
-		vb85t = <2>; /* 2.55 V */
-                status="disabled";
-	};
-
-	isl12022_sram: eeprom@57 {
-		compatible = "atmel,24c01";
-		reg = <0x57>;
-		label = "isl12022-SRAM";
-		pagesize = <128>;
-		size = <128>;
-		address-width = <8>;
 	};
 
 	gpio8: gpio@28 {
@@ -235,11 +217,6 @@
 		base = <224>;
 		ngpios = <32>;
 
-		gpio-line-names = "CN1_63", "CN1_67", "CN1_87", "REVA_MUX_AD_15",
-			"REVA_CN2_54", "CN2_78", "CN2_80", "CN2_86", "CN2_88",
-			"CN2_94", "CN2_96", "CN2_98", "CN2_100", "", "", "", "",
-			"", "", "", "",	"", "", "", "", "", "", "", "", "", "",
-			"PUSH_SW#";
 	};
 };
 
